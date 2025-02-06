@@ -49,6 +49,278 @@ html {
         }
     }
 
+    .mb_header {
+        display: none;
+        width: 100%;
+        height: 90px;
+        justify-content: space-around;
+        align-items: center;
+        margin: 0 0 3px 0;
+        background-color: white;
+
+
+        .menu {
+            display: flex;
+            justify-content: center;
+            width: 19%;
+
+            img {
+                font-size: 30px;
+                margin-left: 20px;
+                width: 30px;
+                height: 30px;
+                object-fit: contain;
+                margin-right: 15px;
+            }
+        }
+
+        .logo_mb {
+            display: flex;
+            justify-content: center;
+            width: 40%;
+
+            img {
+                width: 80px;
+                height: 140px;
+                object-fit: contain;
+            }
+        }
+
+        .mb_else_icons {
+            display: flex;
+            justify-content: center;
+            width: 20%;
+
+            img:nth-child(1) {
+                font-size: 30px;
+                margin-left: 20px;
+                width: 30px;
+                height: 30px;
+                object-fit: contain;
+                margin-right: 10px;
+            }
+
+            .basket_box {
+                width: 40px;
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+
+                .show_product_card {
+                    display: flex;
+                    justify-content: center;
+                    font-size: 34px;
+                    margin-left: 3px;
+                    text-align: end;
+                    color: #474747;
+                }
+
+                .productNo {
+                    position: absolute;
+                    top: -12px;
+                    right: 3px;
+                    font-size: 19px;
+                }
+            }
+        }
+    }
+
+    .search {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.692);
+        display: none;
+        justify-content: start;
+        align-items: center;
+        flex-direction: column;
+        z-index: 1;
+        overflow-y: hidden;
+        overflow-x: hidden;
+
+        .close_box {
+            width: 100%;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+
+            i {
+                font-size: 25px;
+                text-align: end;
+                margin: 8px;
+            }
+        }
+
+        .search_box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 10px 0;
+
+            .search_inp {
+                width: 40%;
+                height: 35px;
+                border-top-left-radius: 50px;
+                border-bottom-left-radius: 50px;
+                border-top-right-radius: 50px;
+                border-bottom-right-radius: 50px;
+                border: none;
+                outline: none;
+                padding-left: 10px;
+            }
+
+            .search_button {
+                width: 60px;
+                height: 37px;
+                border-top-right-radius: 50px;
+                border-bottom-right-radius: 50px;
+                background-color: #607d8b;
+                color: white;
+                border: none;
+                outline: none;
+            }
+        }
+
+        .search_results {
+            display: flex;
+            justify-content: center;
+            align-items: start;
+            flex-direction: column;
+            gap: 5px; // Ürünler arasında boşluk
+            margin-top: 10px; // Arama sonuçları için üst boşluk
+            overflow-y: auto; // Dikey kaydırma alanı
+            border-radius: 8px; // Köşe yuvarlama
+            padding: 10px; // İç boşluk eklemek için
+            width: 100%;
+            color: black;
+
+
+            .volume-select {
+                margin: 0 13px;
+                color: black;
+                outline: none;
+                border: none;
+                background-color: #ede3da;
+
+
+                select.volume-options {
+                    display: flex;
+                    padding: 3px; // İç boşluk
+                    background-color: #fff; // Arka plan rengi
+                    font-size: 15px; // Yazı boyutu
+                    color: #292627; // Yazı rengi
+                    cursor: pointer; // İmleci işaretçi yap
+                    font-weight: 500; // Yazı kalınlığı
+                    width: 100%;
+                    outline: none;
+                    border: none;
+                    -webkit-appearance: flex;
+                    -moz-appearance: flex;
+                    appearance: flex;
+                    background: transparent;
+                    padding: 10px;
+
+                    .volume-options::-ms-expand {
+                        display: flex;
+                        /* Internet Explorer için default açılır menü */
+                    }
+
+                    &:focus {
+                        outline: none; // Varsayılan odak çerçevesini kaldır
+                        border-color: #ecc14d; // Odaklandığında sınır rengi değişimi
+                        background-color: #f7f7f7; // Arka plan rengi değişimi
+                        border: none;
+                    }
+
+                    option {
+                        padding: 10px; // Seçenekler için iç boşluk
+                        background-color: #292627;
+                        color: white; // Yazı rengi
+                        border: none; // Kenar yok
+                        width: 100%;
+                        font-weight: 600;
+                        outline: none;
+                        border: none;
+                    }
+
+                    option:hover {
+                        background-color: #f2f2f2; // Seçenek üzerine gelindiğinde arka plan rengi
+                    }
+                }
+            }
+
+            .product-result {
+                display: flex; // Yatay hizalama
+                align-items: center; // Dikey hizalama
+                justify-content: start;
+                height: 80px;
+                padding: 5px;
+                border: 1px solid #e0e0e0; // Çerçeve
+                border-radius: 8px; // Köşe yuvarlama
+                background-color: #ffffff; // Arka plan rengi
+                transition: box-shadow 0.3s ease, transform 0.2s ease; // Geçiş efektleri
+                width: 100%;
+                color: black;
+
+                &:hover {
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); // Hover etkisi
+                    transform: translateY(-2px); // Hafif yukarı kaydırma efekti
+                }
+
+                .product-link {
+                    display: flex; // İçerikleri yan yana yerleştir
+                    text-decoration: none; // Alt çizgiyi kaldır
+                    color: inherit; // Renk mirasını koru
+                    justify-content: space-between;
+                    align-items: center;
+
+                    .product-image {
+                        max-width: 70px; // Resim boyutu
+                        height: auto; // Yükseklik otomatik
+                        border-radius: 5px; // Köşe yuvarlama
+                        margin-right: 15px; // Sağ boşluk
+                        object-fit: cover; // Resim kaplama
+                    }
+
+                    .product-details {
+                        display: flex;
+                        justify-content: start;
+                        width: 100%;
+
+                        .product-name {
+                            font-size: 1em; // Başlık boyutu
+                            margin-right: 15px; // Varsayılan margin'i kaldır
+                            font-weight: bold; // Kalın yazı tipi
+                            color: #333; // Başlık rengi
+                            text-align: start;
+                            margin-right: 5px;
+                        }
+
+                        .product-price {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            i {
+                margin: 0 5px;
+                color: #edbe63;
+                padding: 5px 4px;
+            }
+
+            p {
+                color: #777; // Yazı rengi
+                text-align: center; // Ortala
+                margin: 10px 0; // Üst ve alt boşluk
+            }
+        }
+    }
+
     .slider_box {
         width: 100%;
         height: 350px;
@@ -191,7 +463,7 @@ html {
                         display: none;
                     }
 
-                    .new {
+                    .newPro {
                         position: absolute;
                         top: 2px;
                         right: 2px;
@@ -200,6 +472,7 @@ html {
                         font-size: 22px;
                         padding: 5px 7px;
                         display: none;
+                        z-index: 1;
                     }
                 }
 
@@ -282,9 +555,9 @@ html {
                 }
             }
 
-            .notFound{
-                width: 80px;
-                height: 80px;
+            .notFound {
+                width:200px;
+                height: 200px;
                 object-fit: contain;
             }
         }

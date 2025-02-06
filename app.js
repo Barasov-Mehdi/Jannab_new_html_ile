@@ -6,7 +6,7 @@ let currentIndex = 0;
 const itemsPerLoad = 4;
 let products = [];
 
-// Ürünleri API'den çek
+// products API'
 async function fetchProducts() {
     try {
         const response = await fetch(apiUrl);
@@ -21,7 +21,7 @@ async function fetchProducts() {
     }
 }
 
-// Ürünleri göster
+// show products
 function displayProducts() {
     const end = Math.min(currentIndex + itemsPerLoad, products.length);
     for (let i = currentIndex; i < end; i++) {
@@ -31,14 +31,14 @@ function displayProducts() {
     currentIndex += itemsPerLoad;
 }
 
-// Ürün kutusunu oluştur
+// create product boxs
 function createProductBox(product) {
     const priceObj = product.price;
     const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
 
     if (isNaN(price)) {
         console.error(`Invalid price for product ${product.name}:`, priceObj);
-        return; // Fiyat geçersizse bu ürünü atla
+        return;
     }
 
     const discountObj = product.discount;
@@ -46,10 +46,13 @@ function createProductBox(product) {
 
     if (isNaN(discount)) {
         console.error(`Invalid price for product ${product.name}:`, discountObj);
-        return; // Fiyat geçersizse bu ürünü atla
+        return;
     }
 
     const productBox = document.createElement('section');
+    const productDate = new Date(product.date);
+    const daysOld = (new Date() - productDate) / (1000 * 60 * 60 * 24);
+
     productBox.classList.add('product_box');
     productBox.innerHTML = `
         <a href="#" class="open_detailsPage">
@@ -58,7 +61,7 @@ function createProductBox(product) {
                 <span class="discount" style="display: ${discount > 0 ? 'flex' : 'none'};">
                     ${discount > 0 ? ` ${discount}%` : ''}
                 </span>
-                <span class="new">Yeni</span>
+                ${daysOld <= 7 ? '<span class="newPro" style="display: flex;">Yeni</span>' : ''}
             </div>
         </a>
         <div class="name_container">
@@ -78,7 +81,7 @@ function createProductBox(product) {
     product_container.append(productBox);
 }
 
-// "Daha fazla yükle" butonuna tıklandığında daha fazla ürün göster
+// load more
 loadMoreBtn.addEventListener('click', () => {
     if (currentIndex < products.length) {
         displayProducts();
@@ -87,7 +90,7 @@ loadMoreBtn.addEventListener('click', () => {
     }
 });
 
-// Trend ürünleri göster
+// 
 const trend = document.querySelector('.trend');
 trend.addEventListener('click', () => {
     product_container.innerHTML = ''; // Mevcut ürünleri sil
@@ -100,19 +103,74 @@ trend.addEventListener('click', () => {
     }
 });
 
-// İndirimli ürünleri göster
+// discount
 const discountProduct = document.querySelector('.discountProduct'); // Doğru isimlendirme
 discountProduct.addEventListener('click', () => {
     product_container.innerHTML = ''; // Mevcut ürünleri sil
     const isDiscountProducts = products.filter(product => product.isDiscounted === true);
-    
+
 
     if (isDiscountProducts.length > 0) {
         isDiscountProducts.forEach(createProductBox);
+        loadMoreBtn.style.display = 'none'; 
+
     } else {
         product_container.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
         loadMoreBtn.style.display = 'none'; // Butonu gizle
     }
 });
 
+// new product
+const newProductsBtn = document.querySelector('.newProducts');
+const newPro = document.querySelector('.newPro');
+newProductsBtn.addEventListener('click', () => {
+    product_container.innerHTML = '';
+    const tenDaysAgo = new Date();
+    tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+
+    const newProducts = products.filter(product => {
+
+        if (!product.date) return false;
+        const productDate = new Date(product.date);
+        return productDate > tenDaysAgo;
+    });
+
+
+    if (newProducts.length > 0) {
+        newProducts.forEach(createProductBox);
+    } else {
+        product_container.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
+        loadMoreBtn.style.display = 'none';
+    }
+});
+
 fetchProducts();
+
+function showSearchBox() {
+    var search_btn = document.querySelectorAll('.search_btn');
+    var search = document.querySelector('.search');
+    var close_search = document.querySelector('.close_search');
+    var slider_box = document.querySelector('.slider_box');
+    var search_inp = document.querySelector('.search_inp');
+
+    search_btn.forEach(e => {
+        e.addEventListener('click', (() => {
+            if (search.style.display === 'none') {
+                search.style.display = 'flex'
+                search_inp.focus();
+            } else {
+                search.style.display = 'none'
+            }
+        }));
+    });
+
+    close_search.addEventListener('click', () => {
+        search.style.display = 'none'
+    });
+    slider_box.addEventListener('click', () => {
+        search.style.display = 'none'
+    });
+
+
+};
+showSearchBox();
