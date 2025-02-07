@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .product_details {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        img {
+            width: 150px;
+            height: 150px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .category {
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #007BFF;
+        }
+
+        .notes p {
+            font-style: italic;
+            color: #666;
+        }
+
+        .best-seller {
+            color: green;
+            font-weight: bold;
+        }
+        
+        .not-found {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="product_details"></div>
+
+    <script>
+        const apiUrl = 'https://jannabperfume-jannabperfume-963b35916771.herokuapp.com/api/products?limit=';
+        const productDetailsContainer = document.querySelector('.product_details');
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+
+        async function showProducts() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                const product = data.find(element => element._id === productId);
+                if (product) {
+                    const div = document.createElement('div');
+                    div.classList.add('product-card');
+                    div.innerHTML = `
+                        <img src="${product.img}" alt="${product.name}">
+                        <h1>${product.name}</h1>
+                        <p class="best-seller">Ən Çox Satılan: ${product.bestSellers ? 'He' : 'Yox'}</p>
+                        <p>Təsvir: ${product.content}</p>
+                        <p class="category">Kateqoriya: ${product.category.toUpperCase()}</p>
+                        <div class="notes">
+                            ${product.notes ? product.notes.map(note => `<p>${note}</p>`).join('') : ''}
+                        </div>
+                    `;
+                    productDetailsContainer.appendChild(div);
+                } else {
+                    productDetailsContainer.innerHTML = '<p class="not-found">Product not found</p>';
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                productDetailsContainer.innerHTML = '<p class="not-found">Veri alınırken bir hata oluştu.</p>';
+            }
+        }
+
+        showProducts();
+    </script>
+</body>
+
+</html>

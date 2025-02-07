@@ -6,6 +6,8 @@ let currentIndex = 0;
 const itemsPerLoad = 4;
 let products = [];
 
+
+
 // products API'
 async function fetchProducts() {
     try {
@@ -55,7 +57,7 @@ function createProductBox(product) {
 
     productBox.classList.add('product_box');
     productBox.innerHTML = `
-        <a href="#" class="open_detailsPage">
+        
             <div class="img_container">
                 <img src="${product.img}" alt="${product.name}">
                 <span class="discount" style="display: ${discount > 0 ? 'flex' : 'none'};">
@@ -63,7 +65,6 @@ function createProductBox(product) {
                 </span>
                 ${daysOld <= 7 ? '<span class="newPro" style="display: flex;">Yeni</span>' : ''}
             </div>
-        </a>
         <div class="name_container">
             <h2>${product.name}</h2>
         </div>
@@ -79,6 +80,14 @@ function createProductBox(product) {
         </div>
     `;
     product_container.append(productBox);
+
+    var img_container = document.querySelectorAll('.img_container');
+
+    img_container.forEach(element => {
+        element.addEventListener('click', () => {
+            window.open(`details.html?id=${product._id}`, '_blank');
+        });
+    });
 }
 
 // load more
@@ -112,7 +121,7 @@ discountProduct.addEventListener('click', () => {
 
     if (isDiscountProducts.length > 0) {
         isDiscountProducts.forEach(createProductBox);
-        loadMoreBtn.style.display = 'none'; 
+        loadMoreBtn.style.display = 'none';
 
     } else {
         product_container.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
@@ -174,3 +183,59 @@ function showSearchBox() {
 
 };
 showSearchBox();
+
+function createSearchProductBox(product) {
+    const priceObj = product.price;
+    const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
+
+    if (isNaN(price)) {
+        console.error(`Invalid price for product ${product.name}:`, priceObj);
+        return;
+    }
+
+    const search_box = document.createElement('section');
+    search_box.classList.add('search_box');
+    search_box.innerHTML = `
+        <a href="#" target="_blank" class="open_detailsPage">
+            <div class="img_container">
+                <img src="${product.img}" alt="${product.name}">
+            </div>
+        
+        <div class="name_container">
+            <h2>${product.name}</h2>
+        </div>
+        </a>
+        <div class="product_footer">
+            <div class="volume-select">
+                <select class="volume-options">
+                    <option>15 ml - ${(price * 15).toFixed(2)} ₼</option>
+                    <option>30 ml - ${(price * 30).toFixed(2)} ₼</option>
+                    <option>50 ml - ${(price * 50).toFixed(2)} ₼</option>
+                </select>
+            </div>
+            <i class="fa-solid fa-cart-shopping" style="color: white;"></i>
+        </div>
+    `;
+    search_results.append(search_box);
+}
+
+var search_results = document.querySelector('.search_results');
+function searchFunction() {
+    var search_inp = document.querySelector('.search_inp');
+    search_inp.addEventListener('input', () => {
+        search_results.innerHTML = '';
+        var searchValue = search_inp.value.trim().toUpperCase();
+
+        const searchProducts = products.filter(product =>
+            product.name.toUpperCase().includes(searchValue) // Allows partial matching
+        );
+
+
+        if (searchProducts.length > 0) {
+            searchProducts.forEach(createSearchProductBox);
+        } else {
+            product_container.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
+        }
+    });
+
+} searchFunction();
