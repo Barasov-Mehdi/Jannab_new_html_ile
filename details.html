@@ -7,37 +7,62 @@
     <title>Product Details</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f4;
+            background-color: #f9f9f9;
             margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .product_details {
             display: flex;
             flex-direction: column;
+            justify-content: start;
             align-items: center;
             background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            max-width: 500px;
-            margin: 0 auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            max-width: 600px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
         }
 
         img {
-            width: 150px;
-            height: 150px;
-            object-fit: contain;
-            border-radius: 8px;
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
             margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 26px;
             margin: 10px 0;
-            color: #333;
+            color: #222;
+            text-align: start;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin: 15px 0 10px;
+            color: #007BFF;
+            border-bottom: 2px solid #007BFF;
+            display: inline-block;
+            padding-bottom: 5px;
+            text-align: start;
         }
 
         p {
@@ -45,24 +70,68 @@
             line-height: 1.6;
             color: #555;
             margin: 5px 0;
+            text-align: start;
         }
 
         .category {
             font-weight: bold;
             text-transform: uppercase;
             color: #007BFF;
+            margin-top: 10px;
+            margin-left: 3px;
+            padding: 3px 5px;
         }
 
-        .notes p {
-            font-style: italic;
-            color: #666;
+        .notes-section h2 {
+            text-align: start;
+            width: 100%;
+            border: 1px solid black;
+            padding: 3px;
+            background-color: black;
+            color: white;
+        }
+
+        .notes-section {
+            width: 100%;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .notes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .note-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .note-box:hover {
+            transform: scale(1.05);
+        }
+
+        .note-box img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            margin-bottom: 5px;
+            background-color: white;
         }
 
         .best-seller {
-            color: green;
-            font-weight: bold;
+            color: black;
+            font-weight: 400;
+            margin-left: 5px;
         }
-        
+
         .not-found {
             color: red;
             font-weight: bold;
@@ -86,28 +155,59 @@
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-
                 const product = data.find(element => element._id === productId);
+
                 if (product) {
                     const div = document.createElement('div');
-                    div.classList.add('product-card');
                     div.innerHTML = `
                         <img src="${product.img}" alt="${product.name}">
                         <h1>${product.name}</h1>
-                        <p class="best-seller">Ən Çox Satılan: ${product.bestSellers ? 'He' : 'Yox'}</p>
-                        <p>Təsvir: ${product.content}</p>
-                        <p class="category">Kateqoriya: ${product.category.toUpperCase()}</p>
-                        <div class="notes">
-                            ${product.notes ? product.notes.map(note => `<p>${note}</p>`).join('') : ''}
+                        <div style="display: flex; justify-content: start; align-items: start; flex-direction: column; width: 100%;">
+                        <div style="display: flex; font-weight: bold; justify-content: start; align-items: center; width: 100%;">
+                        <p>Ən Çox Satılan: </p>
+                        <p class="best-seller"> ${product.bestSellers ? 'Bəli' : 'Xeyr'}</p>
                         </div>
+                        <div style="display: flex; font-weight: bold; justify-content: start; align-items: center; width: 100%;">
+                        <p style="margin:'0 3px'">Kateqoriya:  </p>
+                        <p class="category" style="color: ${product.category === 'man' ? '#2196f3' : '#ea2a6a'}; background-color: ${product.category === 'man' ? '#d0e1fa' : '#fad0d0'}; padding:'3px 5px'">${product.category.toUpperCase()}</p>
+                        </div>
+                        <p>${product.content}</p>
+                        </div>
+                        
                     `;
                     productDetailsContainer.appendChild(div);
+
+                    function createNotesSection(title, notesObj) {
+                        if (notesObj && notesObj.notes.length === notesObj.images.length) {
+                            const section = document.createElement('div');
+                            section.classList.add('notes-section');
+                            section.innerHTML = `<h2>${title}</h2><div class="notes"></div>`;
+                            const notesContainer = section.querySelector('.notes');
+
+                            notesObj.notes.forEach((note, index) => {
+                                const noteBox = document.createElement('div');
+                                noteBox.classList.add('note-box');
+                                noteBox.innerHTML = `
+                                    <img src="${notesObj.images[index]}" alt="Note Image">
+                                    <span>${note}</span>
+                                `;
+                                notesContainer.appendChild(noteBox);
+                            });
+
+                            productDetailsContainer.appendChild(section);
+                        }
+                    }
+
+                    createNotesSection("Üst Notaları", product.upperNotes);
+                    createNotesSection("Ürək notları:", product.heartNotes);
+                    createNotesSection("Baza Notaları", product.baseNotes);
+
                 } else {
-                    productDetailsContainer.innerHTML = '<p class="not-found">Product not found</p>';
+                    productDetailsContainer.innerHTML = '<p class="not-found">Məhsul tapılmadı</p>';
                 }
             } catch (error) {
                 console.error('API Error:', error);
-                productDetailsContainer.innerHTML = '<p class="not-found">Veri alınırken bir hata oluştu.</p>';
+                productDetailsContainer.innerHTML = '<p class="not-found">Xəta baş verdi</p>';
             }
         }
 
