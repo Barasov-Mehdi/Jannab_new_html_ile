@@ -1,23 +1,20 @@
-// const apiUrl = 'https://jannabperfume-jannabperfume-963b35916771.herokuapp.com/api/products?limit=';
-const apiUrl = '/api/products?limit='; // Proxy sunucunuzun yolu
 const product_container = document.querySelector('.product_container');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
+const product_card_box = document.querySelector('.product_card_box'); // Cart display area
 
 let currentIndex = 0;
 const itemsPerLoad = 4;
 let products = [];
 
-
-// products API'
 async function fetchProducts() {
     try {
-        const response = await fetch(apiUrl);
+        const response = await fetch('https://jannabperfume-jannabperfume-963b35916771.herokuapp.com/api/products?limit=');
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        products = data; // API'den gelen ürünleri globale kaydediyoruz
-        displayProducts(); // İlk ürünleri göster
+        products = data;
+        displayProducts(); // Display the products after data is fetched
     } catch (error) {
         console.error('API Error:', error);
     }
@@ -57,14 +54,13 @@ function createProductBox(product) {
 
     productBox.classList.add('product_box');
     productBox.innerHTML = `
-        
-            <div class="img_container">
-                <img src="${product.img}" alt="${product.name}">
-                <span class="discount" style="display: ${discount > 0 ? 'flex' : 'none'};">
-                    ${discount > 0 ? ` ${discount}%` : ''}
-                </span>
-                ${daysOld <= 7 ? '<span class="newPro" style="display: flex;">Yeni</span>' : ''}
-            </div>
+        <div class="img_container">
+            <img src="${product.img}" alt="${product.name}">
+            <span class="discount" style="display: ${discount > 0 ? 'flex' : 'none'};">
+                ${discount > 0 ? ` ${discount}%` : ''}
+            </span>
+            ${daysOld <= 7 ? '<span class="newPro" style="display: flex;">Yeni</span>' : ''}
+        </div>
         <div class="name_container">
             <h2>${product.name}</h2>
         </div>
@@ -76,10 +72,11 @@ function createProductBox(product) {
                     <option>50 ml - ${(price * 50).toFixed(2)} ₼</option>
                 </select>
             </div>
-            <i class="fa-solid fa-cart-shopping" style="color: white;"></i>
+            <i class="fa-solid fa-cart-shopping add_to_card" style="color: white;" data-product-id="${product._id}"></i>
         </div>
     `;
     product_container.append(productBox);
+
 
     var img_container = document.querySelectorAll('.img_container');
 
@@ -88,6 +85,40 @@ function createProductBox(product) {
             window.open(`details.html?id=${product._id}`, '_blank');
         });
     });
+
+
+    // Attach event listeners *after* the product box is created
+    const addToCardButtons = productBox.querySelectorAll('.add_to_card');
+    addToCardButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const productId = button.dataset.productId;  // Get ID from the data attribute
+            const selectedProduct = products.find(product => product._id === productId); // Find the product in the array
+
+            if (selectedProduct) {
+                addProductToCart(selectedProduct); // Call function to add the product to the cart
+            } else {
+                console.warn("Product not found in data");
+            }
+        });
+    });
+}
+
+// Function to add a product to the cart display
+function addProductToCart(product) {
+    const cartItem = document.createElement('div');
+    cartItem.innerHTML = `
+        <h3>${product.name}</h3>
+        <p>Price: ${product.price['$numberDecimal']} ₼</p>
+        <button class="remove_from_cart" data-product-id="${product._id}">Remove</button>
+    `;
+    product_card_box.appendChild(cartItem);
+
+    // You'll also want to add the "remove from cart" functionality here
+    const removeButton = cartItem.querySelector('.remove_from_cart');
+    removeButton.addEventListener('click', () => {
+        cartItem.remove(); // Remove the item from the display
+        // Optionally, update cart data (e.g., in local storage or a cart array)
+    });
 }
 
 // load more
@@ -95,7 +126,7 @@ loadMoreBtn.addEventListener('click', () => {
     if (currentIndex < products.length) {
         displayProducts();
     } else {
-        loadMoreBtn.style.display = 'none'; // Daha fazla ürün yoksa butonu gizle
+        loadMoreBtn.style.display = 'none'; 
     }
 });
 
@@ -188,7 +219,8 @@ newProductsBtn.addEventListener('click', () => {
     }
 });
 
-fetchProducts();
+fetchProducts(); // Start fetching products
+
 
 function showSearchBox() {
     var search_btn = document.querySelectorAll('.search_btn');
@@ -248,10 +280,18 @@ function createSearchProductBox(product) {
                     <option>50 ml - ${(price * 50).toFixed(2)} ₼</option>
                 </select>
             </div>
-            <i class="fa-solid fa-cart-shopping" style="color: white;"></i>
+            <i class="fa-solid fa-cart-shopping add_to_card" style="color: white;" data-product-id="${product._id}"></i>
         </div>
     `;
+
     search_results.append(search_box);
+    var img_container = document.querySelectorAll('.open_detailsPage');
+
+    img_container.forEach(element => {
+        element.addEventListener('click', () => {
+            window.open(`details.html?id=${product._id}`, '_blank');
+        });
+    });
 }
 
 var search_results = document.querySelector('.search_results');
@@ -320,7 +360,7 @@ getAllProducts.addEventListener('click', () => {
                         <option>50 ml - ${(price * 50).toFixed(2)} ₼</option>
                     </select>
                 </div>
-                <i class="fa-solid fa-cart-shopping" style="color: white;"></i>
+                <i class="fa-solid fa-cart-shopping add_to_card" style="color: white;"></i>
             </div>
         `;
         product_container.append(productBox);

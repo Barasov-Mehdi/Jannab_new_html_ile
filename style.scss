@@ -403,9 +403,6 @@ html {
                 flex-wrap: wrap;
 
 
-                .open_detailsPage {
-                    text-decoration: none;
-                }
 
                 .img_container {
                     width: 100%;
@@ -681,6 +678,99 @@ html {
                 }
             }
 
+        }
+    }
+
+    /* bucket_box.scss */
+
+    .bucket_box {
+        position: fixed;
+        /* Or 'absolute' if you want it to be relative to a parent */
+        top: 20px;
+        /* Adjust as needed */
+        right: 20px;
+        /* Adjust as needed */
+        width: 300px;
+        /* Adjust as needed */
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        z-index: 1000;
+        /* Ensure it's on top of other content */
+        display: flex;
+        /* Initially hidden.  Use JS to toggle visibility */
+
+        &.active {
+            display: block;
+            /* Show when active */
+        }
+
+        .product_card_box {
+            margin-bottom: 15px;
+
+            /* Style for individual cart items */
+            div {
+                border-bottom: 1px solid #eee;
+                padding: 10px 0;
+
+                h3 {
+                    font-size: 1rem;
+                    margin-bottom: 5px;
+                }
+
+                p {
+                    font-size: 0.9rem;
+                    color: #555;
+                }
+
+                button {
+                    background-color: #dc3545;
+                    /* Bootstrap danger color */
+                    color: #fff;
+                    border: none;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 0.85rem;
+
+                    &:hover {
+                        background-color: darken(#dc3545, 10%);
+                    }
+                }
+            }
+        }
+
+        .total_price {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            text-align: right;
+            /* Or left if preferred */
+        }
+
+        .product_buttons {
+            display: flex;
+            justify-content: space-between;
+            /* Or flex-start, center, flex-end as needed */
+
+            button {
+                background-color: #007bff;
+                /* Bootstrap primary color */
+                color: #fff;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 0.9rem;
+                width: 48%;
+                /* Adjust width as needed */
+
+                &:hover {
+                    background-color: darken(#007bff, 10%);
+                }
+            }
         }
     }
 
