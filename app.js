@@ -1,11 +1,11 @@
-const apiUrl = 'https://jannabperfume-jannabperfume-963b35916771.herokuapp.com/api/products?limit=';
+// const apiUrl = 'https://jannabperfume-jannabperfume-963b35916771.herokuapp.com/api/products?limit=';
+const apiUrl = '/api/products?limit='; // Proxy sunucunuzun yolu
 const product_container = document.querySelector('.product_container');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 
 let currentIndex = 0;
 const itemsPerLoad = 4;
 let products = [];
-
 
 
 // products API'
@@ -99,12 +99,47 @@ loadMoreBtn.addEventListener('click', () => {
     }
 });
 
-// 
 const trend = document.querySelector('.trend');
 trend.addEventListener('click', () => {
     product_container.innerHTML = ''; // Mevcut ürünleri sil
     const trendProducts = products.filter(product => product.bestSellers === true);
+    loadMoreBtn.style.display = 'none'; // Butonu gizle
+    if (trendProducts.length > 0) {
+        trendProducts.forEach(createProductBox);
+    } else {
+        product_container.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
+    }
+});
 
+const woman = document.querySelector('.woman');
+woman.addEventListener('click', () => {
+    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    const trendProducts = products.filter(product => product.category === 'woman');
+    loadMoreBtn.style.display = 'none'; // Butonu gizle
+    if (trendProducts.length > 0) {
+        trendProducts.forEach(createProductBox);
+    } else {
+        product_container.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
+    }
+});
+
+const man = document.querySelector('.man');
+man.addEventListener('click', () => {
+    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    const trendProducts = products.filter(product => product.category === 'man');
+    loadMoreBtn.style.display = 'none'; // Butonu gizle
+    if (trendProducts.length > 0) {
+        trendProducts.forEach(createProductBox);
+    } else {
+        product_container.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
+    }
+});
+
+const unisex = document.querySelector('.unisex');
+unisex.addEventListener('click', () => {
+    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    const trendProducts = products.filter(product => product.category === 'unisex');
+    loadMoreBtn.style.display = 'none'; // Butonu gizle
     if (trendProducts.length > 0) {
         trendProducts.forEach(createProductBox);
     } else {
@@ -113,7 +148,7 @@ trend.addEventListener('click', () => {
 });
 
 // discount
-const discountProduct = document.querySelector('.discountProduct'); // Doğru isimlendirme
+const discountProduct = document.querySelector('.discountProduct');
 discountProduct.addEventListener('click', () => {
     product_container.innerHTML = ''; // Mevcut ürünleri sil
     const isDiscountProducts = products.filter(product => product.isDiscounted === true);
@@ -138,7 +173,7 @@ newProductsBtn.addEventListener('click', () => {
     tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
 
     const newProducts = products.filter(product => {
-
+        loadMoreBtn.style.display = 'none';
         if (!product.date) return false;
         const productDate = new Date(product.date);
         return productDate > tenDaysAgo;
@@ -239,3 +274,65 @@ function searchFunction() {
     });
 
 } searchFunction();
+
+const getAllProducts = document.querySelector('.getAllProducts');
+getAllProducts.addEventListener('click', () => {
+    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    products.filter(product => {
+        const priceObj = product.price;
+        const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
+
+        if (isNaN(price)) {
+            console.error(`Invalid price for product ${product.name}:`, priceObj);
+            return;
+        }
+
+        const discountObj = product.discount;
+        const discount = parseFloat(discountObj ? discountObj['$numberDecimal'] : '0');
+
+        if (isNaN(discount)) {
+            console.error(`Invalid price for product ${product.name}:`, discountObj);
+            return;
+        }
+
+        const productBox = document.createElement('section');
+        const productDate = new Date(product.date);
+        const daysOld = (new Date() - productDate) / (1000 * 60 * 60 * 24);
+
+        productBox.classList.add('product_box');
+        productBox.innerHTML = `
+            
+                <div class="img_container">
+                    <img src="${product.img}" alt="${product.name}">
+                    <span class="discount" style="display: ${discount > 0 ? 'flex' : 'none'};">
+                        ${discount > 0 ? ` ${discount}%` : ''}
+                    </span>
+                    ${daysOld <= 7 ? '<span class="newPro" style="display: flex;">Yeni</span>' : ''}
+                </div>
+            <div class="name_container">
+                <h2>${product.name}</h2>
+            </div>
+            <div class="product_footer">
+                <div class="volume-select">
+                    <select class="volume-options">
+                        <option>15 ml - ${(price * 15).toFixed(2)} ₼</option>
+                        <option>30 ml - ${(price * 30).toFixed(2)} ₼</option>
+                        <option>50 ml - ${(price * 50).toFixed(2)} ₼</option>
+                    </select>
+                </div>
+                <i class="fa-solid fa-cart-shopping" style="color: white;"></i>
+            </div>
+        `;
+        product_container.append(productBox);
+
+        var img_container = document.querySelectorAll('.img_container');
+
+        img_container.forEach(element => {
+            element.addEventListener('click', () => {
+                window.open(`details.html?id=${product._id}`, '_blank');
+            });
+        });
+
+    });
+
+});
