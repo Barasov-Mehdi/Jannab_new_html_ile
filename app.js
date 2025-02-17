@@ -51,7 +51,7 @@ function createProductBox(product) {
     const discount = parseFloat(discountObj ? discountObj['$numberDecimal'] : '0');
 
     if (isNaN(discount)) {
-        console.error(`Invalid price for product ${product.name}:`, discountObj);
+        console.error(`Invalid discount for product ${product.name}:`, discountObj);
         return;
     }
 
@@ -74,9 +74,9 @@ function createProductBox(product) {
         <div class="product_footer">
             <div class="volume-select">
                 <select class="volume-options">
-                    <option value="15">15 ml - ${(price * 15).toFixed(2)} ₼</option>
-                    <option value="30">30 ml - ${(price * 30).toFixed(2)} ₼</option>
-                    <option value="50">50 ml - ${(price * 50).toFixed(2)} ₼</option>
+                    <option value="15">15 ml - ${calculatePrice(price, discount, 15).toFixed(2)} ₼</option>
+                    <option value="30">30 ml - ${calculatePrice(price, discount, 30).toFixed(2)} ₼</option>
+                    <option value="50">50 ml - ${calculatePrice(price, discount, 50).toFixed(2)} ₼</option>
                 </select>
             </div>
             <i class="fa-solid fa-cart-shopping add_to_card" style="color: white;" data-product-id="${product._id}"></i>
@@ -105,7 +105,10 @@ function createProductBox(product) {
             // Calculate the price based on the selected volume
             const priceObj = product.price;
             const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
-            const volumePrice = price * parseFloat(selectedVolume);
+            const discountObj = product.discount;
+            const discount = parseFloat(discountObj ? discountObj['$numberDecimal'] : '0');
+
+            const volumePrice = calculatePrice(price, discount, parseFloat(selectedVolume));
             const productName = product.name;
             const productImg = product.img;
 
@@ -120,6 +123,12 @@ function createProductBox(product) {
             addProductToCart(cartItem);
         });
     });
+}
+
+// Function to calculate the discounted price
+function calculatePrice(basePrice, discountPercentage, volume) {
+    const discountedPrice = basePrice * (1 - (discountPercentage / 100));
+    return discountedPrice * volume;
 }
 
 // Function to add a product to the cart display
@@ -319,6 +328,14 @@ function createSearchProductBox(product) {
         return;
     }
 
+    const discountObj = product.discount;
+    const discount = parseFloat(discountObj ? discountObj['$numberDecimal'] : '0');
+
+    if (isNaN(discount)) {
+        console.error(`Invalid discount for product ${product.name}:`, discountObj);
+        return;
+    }
+
     const search_box = document.createElement('section');
     search_box.classList.add('search_box');
     search_box.innerHTML = `
@@ -334,12 +351,12 @@ function createSearchProductBox(product) {
         <div class="product_footer">
             <div class="volume-select">
                 <select class="volume-options">
-                    <option value="15">15 ml - ${(price * 15).toFixed(2)} ₼</option>
-                    <option value="30">30 ml - ${(price * 30).toFixed(2)} ₼</option>
-                    <option value="50">50 ml - ${(price * 50).toFixed(2)} ₼</option>
+                    <option value="15">15 ml - ${calculatePrice(price, discount, 15).toFixed(2)} ₼</option>
+                    <option value="30">30 ml - ${calculatePrice(price, discount, 30).toFixed(2)} ₼</option>
+                    <option value="50">50 ml - ${calculatePrice(price, discount, 50).toFixed(2)} ₼</option>
                 </select>
             </div>
-            <i class="fa-solid fa-cart-shopping add_to_card" style="color: white;" data-product-id="${product._id}"></i>
+            <i class="fa-solid fa-cart-shopping add_to_card" data-product-id="${product._id}"></i>
         </div>
     `;
 
@@ -364,7 +381,10 @@ function createSearchProductBox(product) {
             // Calculate the price based on the selected volume
             const priceObj = product.price;
             const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
-            const volumePrice = price * parseFloat(selectedVolume);
+            const discountObj = product.discount;
+            const discount = parseFloat(discountObj ? discountObj['$numberDecimal'] : '0');
+
+            const volumePrice = calculatePrice(price, discount, parseFloat(selectedVolume));
             const productName = product.name;
 
             const cartItem = {
@@ -424,3 +444,29 @@ show_product_card.forEach(element => {
         bucket_box.style.display = 'flex';
     })
 });
+
+
+function initializeSlider() {
+    var imgArrLarge = ["./img/IMG_7812.JPG", "./img/IMG_7855.JPG"]; // Geniş ekranlar için
+    var imgArrSmall = ["./img/IMG_7816.JPG", "./img/IMG_7827.JPG"]; // Dar ekranlar için
+    var slider_show = document.querySelector('.slider_img'); // Doğru seçim
+    var imgArr = [];
+    var i = 0;
+
+    function updateImageArray() {
+        imgArr = window.innerWidth <= 775 ? imgArrSmall : imgArrLarge;
+        slider_show.src = imgArr[0]; // İlk resmi göster
+        i = 0; // Reset index
+    }
+
+    function changeImage() {
+        if (imgArr.length === 0) return; // Dizinin dolu olduğundan emin ol
+        i = (i + 1) % imgArr.length;
+        slider_show.src = imgArr[i];
+    }
+
+    updateImageArray(); // Başlangıçta diziyi ayarla
+    setInterval(changeImage, 3000); // Resimleri değiştir
+    window.addEventListener('resize', updateImageArray); // Boyut değiştiğinde güncelle
+}
+initializeSlider();

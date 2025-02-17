@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Haqqımızda</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            /* height: 100%; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .full-screen-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            /* position: relative; */
+            width: 100%;
+            /* height: 100; */
+        }
+
+        .full-screen-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .home-link {
+            width: 100%;
+            padding: 10px;
+            background-color: #ede3da;
+        }
+
+        .home-link i {
+            color: #000;
+            font-size: 20px;
+            margin-left: 5px;
+        }
+
+        .home-link:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                /* height: 100%; */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .full-screen-image {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                /* position: relative; */
+                width: 100%;
+                overflow-y: hidden;
+                /* height: 100; */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="full-screen-image" id="imageContainer">
+        <a class="home-link" href="/"><i class="fa-solid fa-chevron-left"></i></a>
+        <img id="responsiveImage" src="" alt="Haqqımızda">
+    </div>
+
+    <script>
+        function loadImage() {
+            const responsiveImage = document.getElementById('responsiveImage');
+            const width = window.innerWidth;
+
+            // Mobil ve büyük ekranlar için uygun resmi seç
+            responsiveImage.src = width <= 768
+                ? "/img/HaqqımızdaMB.png"  // Mobil boyutlar
+                : "/img/HaqqımızdaPC.png"; // Büyük ekranlar
+        }
+
+        // Sayfa yüklendiğinde ve pencere boyutu değiştiğinde resmi yükle
+        window.addEventListener('load', loadImage);
+        window.addEventListener('resize', loadImage);
+    </script>
+
+</body>
+
+</html>
