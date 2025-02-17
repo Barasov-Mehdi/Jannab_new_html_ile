@@ -1,10 +1,18 @@
 const product_container = document.querySelector('.product_container');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
 const product_card_box = document.querySelector('.product_card_box'); // Cart display area
-
+const search_results = document.querySelector('.search_results'); // Search results display area
+const totalPrice = document.querySelector('.totalPrice'); // Total price display
+const productNoElements = document.querySelectorAll('.productNo'); // Select all productNo elements
 let currentIndex = 0;
 const itemsPerLoad = 4;
 let products = [];
+let cart = []; // Array to store cart items
+
+// Helper function to find a product by ID in the products array
+function findProductById(productId) {
+    return products.find(product => product._id === productId);
+}
 
 async function fetchProducts() {
     try {
@@ -30,7 +38,6 @@ function displayProducts() {
     currentIndex += itemsPerLoad;
 }
 
-// create product boxs
 function createProductBox(product) {
     const priceObj = product.price;
     const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
@@ -67,9 +74,9 @@ function createProductBox(product) {
         <div class="product_footer">
             <div class="volume-select">
                 <select class="volume-options">
-                    <option>15 ml - ${(price * 15).toFixed(2)} ₼</option>
-                    <option>30 ml - ${(price * 30).toFixed(2)} ₼</option>
-                    <option>50 ml - ${(price * 50).toFixed(2)} ₼</option>
+                    <option value="15">15 ml - ${(price * 15).toFixed(2)} ₼</option>
+                    <option value="30">30 ml - ${(price * 30).toFixed(2)} ₼</option>
+                    <option value="50">50 ml - ${(price * 50).toFixed(2)} ₼</option>
                 </select>
             </div>
             <i class="fa-solid fa-cart-shopping add_to_card" style="color: white;" data-product-id="${product._id}"></i>
@@ -89,35 +96,87 @@ function createProductBox(product) {
 
     // Attach event listeners *after* the product box is created
     const addToCardButtons = productBox.querySelectorAll('.add_to_card');
+    const volumeOptions = productBox.querySelectorAll('.volume-options'); // Changed from volume_options
     addToCardButtons.forEach(button => {
         button.addEventListener('click', () => {
+            const selectedVolume = volumeOptions[0].value;
             const productId = button.dataset.productId;  // Get ID from the data attribute
-            const selectedProduct = products.find(product => product._id === productId); // Find the product in the array
 
-            if (selectedProduct) {
-                addProductToCart(selectedProduct); // Call function to add the product to the cart
-            } else {
-                console.warn("Product not found in data");
-            }
+            // Calculate the price based on the selected volume
+            const priceObj = product.price;
+            const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
+            const volumePrice = price * parseFloat(selectedVolume);
+            const productName = product.name;
+            const productImg = product.img;
+
+            const cartItem = {
+                productId: productId,
+                productName: productName,
+                productImg: productImg,
+                volume: selectedVolume,
+                price: volumePrice,
+            };
+
+            addProductToCart(cartItem);
         });
     });
 }
 
 // Function to add a product to the cart display
-function addProductToCart(product) {
-    const cartItem = document.createElement('div');
-    cartItem.innerHTML = `
-        <h3>${product.name}</h3>
-        <p>Price: ${product.price['$numberDecimal']} ₼</p>
-        <button class="remove_from_cart" data-product-id="${product._id}">Remove</button>
-    `;
-    product_card_box.appendChild(cartItem);
+function addProductToCart(cartItem) {
+    // Check if the item is already in the cart
+    const existingCartItem = cart.find(item => item.productId === cartItem.productId && item.volume === cartItem.volume);
 
-    // You'll also want to add the "remove from cart" functionality here
-    const removeButton = cartItem.querySelector('.remove_from_cart');
+    if (existingCartItem) {
+        // If the item exists, you can update the quantity (if you have quantity) or show a message
+        console.warn("This item is already in the cart"); // Or update quantity
+        return;
+    }
+
+    cart.push(cartItem); // Add item to the cart array
+    const cartProduct = document.createElement('div');
+    cartProduct.classList.add('cart-item'); // Add class for styling if needed
+    cartProduct.innerHTML = `
+        <div class="card_img_name">
+        <img src="${cartItem.productImg}" alt="${cartItem.productName}">
+        <h3>${cartItem.productName} (${cartItem.volume}ml)</h3>
+        </div>
+        <div class="card_price_remove">
+        
+        <i class="fa-solid fa-xmark remove_from_cart"  data-product-id="${cartItem.productId}" data-volume="${cartItem.volume}"></i>
+        </div>
+        `;
+    product_card_box.appendChild(cartProduct);
+    {/* <p>Price: ${cartItem.price.toFixed(2)} ₼</p> */ }
+    // Add remove functionality
+    const removeButton = cartProduct.querySelector('.remove_from_cart');
     removeButton.addEventListener('click', () => {
-        cartItem.remove(); // Remove the item from the display
-        // Optionally, update cart data (e.g., in local storage or a cart array)
+        const productIdToRemove = removeButton.dataset.productId;
+        const volumeToRemove = removeButton.dataset.volume;
+
+        // Remove from cart array
+        cart = cart.filter(item => !(item.productId === productIdToRemove && item.volume === volumeToRemove));
+        cartProduct.remove(); // Remove from display
+        updateProductNo(); // Update productNo after removal
+        updateTotalPrice(); // Update total *after* removing an item
+    });
+    updateProductNo(); // Update productNo after addition
+    updateTotalPrice(); // Update the total after adding an item
+}
+
+// Function to update the total price display
+function updateTotalPrice() {
+    let total = 0;
+    cart.forEach(item => {
+        total += item.price; // Sum the prices of items in the cart
+    });
+    totalPrice.innerHTML = total.toFixed(2) + " ₼"; // Display the total, formatted to 2 decimal places and currency symbol
+}
+
+// Function to update the product number display
+function updateProductNo() {
+    productNoElements.forEach(element => {
+        element.textContent = cart.length;
     });
 }
 
@@ -126,15 +185,15 @@ loadMoreBtn.addEventListener('click', () => {
     if (currentIndex < products.length) {
         displayProducts();
     } else {
-        loadMoreBtn.style.display = 'none'; 
+        loadMoreBtn.style.display = 'none';
     }
 });
 
 const trend = document.querySelector('.trend');
 trend.addEventListener('click', () => {
-    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    product_container.innerHTML = '';
     const trendProducts = products.filter(product => product.bestSellers === true);
-    loadMoreBtn.style.display = 'none'; // Butonu gizle
+    loadMoreBtn.style.display = 'none';
     if (trendProducts.length > 0) {
         trendProducts.forEach(createProductBox);
     } else {
@@ -144,9 +203,9 @@ trend.addEventListener('click', () => {
 
 const woman = document.querySelector('.woman');
 woman.addEventListener('click', () => {
-    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    product_container.innerHTML = '';
     const trendProducts = products.filter(product => product.category === 'woman');
-    loadMoreBtn.style.display = 'none'; // Butonu gizle
+    loadMoreBtn.style.display = 'none';
     if (trendProducts.length > 0) {
         trendProducts.forEach(createProductBox);
     } else {
@@ -156,9 +215,9 @@ woman.addEventListener('click', () => {
 
 const man = document.querySelector('.man');
 man.addEventListener('click', () => {
-    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    product_container.innerHTML = '';
     const trendProducts = products.filter(product => product.category === 'man');
-    loadMoreBtn.style.display = 'none'; // Butonu gizle
+    loadMoreBtn.style.display = 'none';
     if (trendProducts.length > 0) {
         trendProducts.forEach(createProductBox);
     } else {
@@ -168,9 +227,9 @@ man.addEventListener('click', () => {
 
 const unisex = document.querySelector('.unisex');
 unisex.addEventListener('click', () => {
-    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    product_container.innerHTML = '';
     const trendProducts = products.filter(product => product.category === 'unisex');
-    loadMoreBtn.style.display = 'none'; // Butonu gizle
+    loadMoreBtn.style.display = 'none';
     if (trendProducts.length > 0) {
         trendProducts.forEach(createProductBox);
     } else {
@@ -181,7 +240,7 @@ unisex.addEventListener('click', () => {
 // discount
 const discountProduct = document.querySelector('.discountProduct');
 discountProduct.addEventListener('click', () => {
-    product_container.innerHTML = ''; // Mevcut ürünleri sil
+    product_container.innerHTML = '';
     const isDiscountProducts = products.filter(product => product.isDiscounted === true);
 
 
@@ -275,9 +334,9 @@ function createSearchProductBox(product) {
         <div class="product_footer">
             <div class="volume-select">
                 <select class="volume-options">
-                    <option>15 ml - ${(price * 15).toFixed(2)} ₼</option>
-                    <option>30 ml - ${(price * 30).toFixed(2)} ₼</option>
-                    <option>50 ml - ${(price * 50).toFixed(2)} ₼</option>
+                    <option value="15">15 ml - ${(price * 15).toFixed(2)} ₼</option>
+                    <option value="30">30 ml - ${(price * 30).toFixed(2)} ₼</option>
+                    <option value="50">50 ml - ${(price * 50).toFixed(2)} ₼</option>
                 </select>
             </div>
             <i class="fa-solid fa-cart-shopping add_to_card" style="color: white;" data-product-id="${product._id}"></i>
@@ -285,6 +344,7 @@ function createSearchProductBox(product) {
     `;
 
     search_results.append(search_box);
+
     var img_container = document.querySelectorAll('.open_detailsPage');
 
     img_container.forEach(element => {
@@ -292,87 +352,75 @@ function createSearchProductBox(product) {
             window.open(`details.html?id=${product._id}`, '_blank');
         });
     });
+
+    // Add event listeners *after* the search box is created
+    const addToCardButtons = search_box.querySelectorAll('.add_to_card');
+    const volumeOptions = search_box.querySelectorAll('.volume-options'); // Changed from volume_options
+    addToCardButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const selectedVolume = volumeOptions[0].value;
+            const productId = button.dataset.productId;  // Get ID from the data attribute
+
+            // Calculate the price based on the selected volume
+            const priceObj = product.price;
+            const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
+            const volumePrice = price * parseFloat(selectedVolume);
+            const productName = product.name;
+
+            const cartItem = {
+                productId: productId,
+                productName: productName,
+                volume: selectedVolume,
+                price: volumePrice,
+            };
+
+            addProductToCart(cartItem); // Call the function to add the product
+        });
+    });
 }
 
-var search_results = document.querySelector('.search_results');
 function searchFunction() {
     var search_inp = document.querySelector('.search_inp');
     search_inp.addEventListener('input', () => {
         search_results.innerHTML = '';
         var searchValue = search_inp.value.trim().toUpperCase();
 
-        const searchProducts = products.filter(product =>
-            product.name.toUpperCase().includes(searchValue) // Allows partial matching
-        );
+        if (searchValue.length > 0) {
+            const searchProducts = products.filter(product =>
+                product.name.toUpperCase().includes(searchValue) // Allows partial matching
+            );
 
-
-        if (searchProducts.length > 0) {
-            searchProducts.forEach(createSearchProductBox);
-        } else {
-            product_container.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
+            if (searchProducts.length > 0) {
+                searchProducts.forEach(createSearchProductBox);
+            } else {
+                search_results.innerHTML = `<img class="notFound" src="./img/icons8-not-found-50.png" alt="Jannab Perfume">`;
+            }
         }
     });
-
-} searchFunction();
+}
+searchFunction();
 
 const getAllProducts = document.querySelector('.getAllProducts');
 getAllProducts.addEventListener('click', () => {
-    product_container.innerHTML = ''; // Mevcut ürünleri sil
-    products.filter(product => {
-        const priceObj = product.price;
-        const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
+    product_container.innerHTML = '';
+    displayProducts();
+    loadMoreBtn.style.display = ''; // Show load more button
+});
 
-        if (isNaN(price)) {
-            console.error(`Invalid price for product ${product.name}:`, priceObj);
-            return;
-        }
+// Initial total price update (when the page loads)
+updateProductNo(); // Initial product number update
+updateTotalPrice(); // Initial total price update
 
-        const discountObj = product.discount;
-        const discount = parseFloat(discountObj ? discountObj['$numberDecimal'] : '0');
+var close_bucket_box = document.querySelector('.close_bucket_box');
+var bucket_box = document.querySelector('.bucket_box');
+close_bucket_box.addEventListener('click', () => {
+    bucket_box.style.display = 'none';
+})
 
-        if (isNaN(discount)) {
-            console.error(`Invalid price for product ${product.name}:`, discountObj);
-            return;
-        }
+var show_product_card = document.querySelectorAll('.show_product_card');
 
-        const productBox = document.createElement('section');
-        const productDate = new Date(product.date);
-        const daysOld = (new Date() - productDate) / (1000 * 60 * 60 * 24);
-
-        productBox.classList.add('product_box');
-        productBox.innerHTML = `
-            
-                <div class="img_container">
-                    <img src="${product.img}" alt="${product.name}">
-                    <span class="discount" style="display: ${discount > 0 ? 'flex' : 'none'};">
-                        ${discount > 0 ? ` ${discount}%` : ''}
-                    </span>
-                    ${daysOld <= 7 ? '<span class="newPro" style="display: flex;">Yeni</span>' : ''}
-                </div>
-            <div class="name_container">
-                <h2>${product.name}</h2>
-            </div>
-            <div class="product_footer">
-                <div class="volume-select">
-                    <select class="volume-options">
-                        <option>15 ml - ${(price * 15).toFixed(2)} ₼</option>
-                        <option>30 ml - ${(price * 30).toFixed(2)} ₼</option>
-                        <option>50 ml - ${(price * 50).toFixed(2)} ₼</option>
-                    </select>
-                </div>
-                <i class="fa-solid fa-cart-shopping add_to_card" style="color: white;"></i>
-            </div>
-        `;
-        product_container.append(productBox);
-
-        var img_container = document.querySelectorAll('.img_container');
-
-        img_container.forEach(element => {
-            element.addEventListener('click', () => {
-                window.open(`details.html?id=${product._id}`, '_blank');
-            });
-        });
-
-    });
-
+show_product_card.forEach(element => {
+    element.addEventListener('click', () => {
+        bucket_box.style.display = 'flex';
+    })
 });
