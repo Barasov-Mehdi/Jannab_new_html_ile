@@ -5,8 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
     <style>
+        /* (CSS Stilleri - Önceki CSS kodunuzu buraya yapıştırın) */
         * {
             margin: 0;
             padding: 0;
@@ -17,26 +24,61 @@
         body {
             background-color: #f4f7fc;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            justify-content: flex-start;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 30px;
             min-height: 100vh;
-            padding: 40px;
         }
+
+        /* Back to Home Icon Styling */
+        .back-to-home {
+            /* A more distinct blue */
+            color: white;
+            width: 100%;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            /* Space between icon and text */
+        }
+
+        .back-to-home:hover {
+            background-color: #5dafe6;
+            /* Darker blue on hover */
+            transform: translateY(-2px);
+        }
+
+        .back-to-home i {
+            font-size: 1.2rem;
+            /* Larger icon */
+        }
+
 
         .product_details {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            gap: 30px;
+            /* Increased gap for better spacing */
+            justify-content: center;
             justify-items: center;
             width: 100%;
             max-width: 1200px;
+            padding-bottom: 20px;
+            /* Space at the bottom */
         }
 
         .product-card {
             background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 16px;
+            /* More rounded corners */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 25px;
             width: 100%;
             text-align: center;
             transition: all 0.3s ease;
@@ -44,50 +86,58 @@
 
         .product-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            /* Stronger shadow on hover */
         }
 
         .product-card img {
-            width: 220px;
-            height: 220px;
+            width: 250px;
+            /* Slightly larger image */
+            height: 250px;
             object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
         .product-card h1 {
-            font-size: 26px;
-            margin: 10px 0;
+            font-size: 28px;
+            /* Slightly larger heading */
+            margin: 12px 0;
             color: #333;
         }
 
         .product-card h2 {
-            font-size: 18px;
-            margin: 10px 0;
+            font-size: 20px;
+            /* Slightly larger heading */
+            margin: 12px 0;
             color: #007bff;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 5px;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 8px;
         }
 
         .product-card p {
-            font-size: 16px;
-            line-height: 1.6;
+            font-size: 17px;
+            /* Slightly larger text */
+            line-height: 1.7;
             color: #555;
-            margin: 8px 0;
+            margin: 10px 0;
         }
 
         .category {
             font-weight: bold;
             text-transform: uppercase;
-            color: #007BFF;
-            background-color: #e0f7ff;
-            padding: 5px 10px;
-            border-radius: 4px;
+            color: #fff;
+            background-color: #007bff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            /* To only take up space needed */
         }
 
         .best-seller {
-            color: #333;
+            color: #27ae60;
+            /* Green color for emphasis */
             font-weight: bold;
             margin-left: 5px;
         }
@@ -138,57 +188,44 @@
             border-radius: 50%;
         }
 
-        .not-found {
-            color: red;
+        .not-found,
+        .loading {
+            color: #e74c3c;
+            /* Red color for better visibility */
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
+            /* Slightly larger font size */
             text-align: center;
             margin-top: 30px;
         }
 
-        @media (max-width: 768px) {
-            body {
-                padding: 20px;
-            }
-
-            .product_details {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .product-card img {
-                width: 180px;
-                height: 180px;
-            }
+        .loading {
+            color: #3498db;
         }
 
-        @media (max-width: 480px) {
-            .product_details {
-                grid-template-columns: 1fr;
-            }
+        .buyProducts {
+            width: 120px;
+            background-color: white;
+            border: 1px solid #333;
+            outline: none;
+            margin: 30px 0;
+            padding: 5px 0;
+        }
 
-            .product-card img {
-                width: 150px;
-                height: 150px;
-            }
-
-            .product-card h1 {
-                font-size: 22px;
-            }
-
-            .product-card h2 {
-                font-size: 16px;
-            }
-
-            .product-card p {
-                font-size: 14px;
-            }
+        .buyProducts:hover {
+            background-color: #27ae60;
+            color: white;
         }
     </style>
 </head>
 
 <body>
-    <div class="product_details"></div>
-
+    <a href="./index.html" target="_parent" class="back-to-home" style="margin: 20px 0;">
+        <i class="fas fa-chevron-left" style="color: black;"></i>
+    </a>
+    <button class="buyProducts" onclick="buyProducts()">Sifarişi təsdiqlə</button>
+    <div class="product_details">
+    </div>
     <script>
         const apiUrl = 'https://jannabperfume-jannabperfume-963b35916771.herokuapp.com/api/products?limit=';
         const productDetailsContainer = document.querySelector('.product_details');
@@ -197,6 +234,7 @@
 
         async function showProducts() {
             try {
+                productDetailsContainer.innerHTML = '<p class="loading">Yüklənir...</p>';
                 const response = await fetch(apiUrl);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -204,8 +242,8 @@
                 const data = await response.json();
 
                 const filteredProducts = data.filter(product => productIds.includes(product._id));
-
                 if (filteredProducts.length > 0) {
+                    productDetailsContainer.innerHTML = '';
                     filteredProducts.forEach(product => {
                         const div = document.createElement('div');
                         div.classList.add('product-card');
@@ -213,11 +251,9 @@
                             <img src="${product.img}" alt="${product.name}">
                             <h1>${product.name}</h1>
                             <p><strong>Ən Çox Satılan:</strong> <span class="best-seller">${product.bestSellers ? 'Bəli' : 'Xeyr'}</span></p>
-                            <p><strong>Kateqoriya:</strong> <span class="category" style="color: ${product.category === 'man' ? '#2196f3' : '#ea2a6a'};">${product.category.toUpperCase()}</span></p>
-                            <p>${product.content}</p>
+                            <p><strong>Kateqoriya:</strong> <span class="category" style="background-color: ${product.category === 'man' ? '#2196f3' : '#e74c3c'};">${product.category.toUpperCase()}</span></p>
                         `;
                         productDetailsContainer.appendChild(div);
-
                     });
                 } else {
                     productDetailsContainer.innerHTML = '<p class="not-found">Məhsul tapılmadı</p>';
@@ -227,7 +263,18 @@
                 productDetailsContainer.innerHTML = '<p class="not-found">Xəta baş verdi</p>';
             }
         }
+
+        // Only show products on page load
         showProducts();
+
+        function buyProducts() {
+            const phoneNumber = "+994553974421";
+            const pageUrl = window.location.href;
+            const message = `${pageUrl}`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            window.open(whatsappLink, '_blank');
+        }
     </script>
 </body>
 
