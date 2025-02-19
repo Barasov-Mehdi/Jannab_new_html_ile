@@ -1,13 +1,14 @@
 const product_container = document.querySelector('.product_container');
 const loadMoreBtn = document.getElementById('loadMoreBtn');
-const product_card_box = document.querySelector('.product_card_box'); // Cart display area
-const search_results = document.querySelector('.search_results'); // Search results display area
-const totalPrice = document.querySelector('.totalPrice'); // Total price display
-const productNoElements = document.querySelectorAll('.productNo'); // Select all productNo elements
+const product_card_box = document.querySelector('.product_card_box');
+const search_results = document.querySelector('.search_results');
+const totalPrice = document.querySelector('.totalPrice');
+const productNoElements = document.querySelectorAll('.productNo');
 let currentIndex = 0;
 const itemsPerLoad = 4;
 let products = [];
-let cart = []; // Array to store cart items
+let cart = [];
+let shareProArray = [];
 
 // Helper function to find a product by ID in the products array
 function findProductById(productId) {
@@ -171,6 +172,26 @@ function addProductToCart(cartItem) {
     });
     updateProductNo(); // Update productNo after addition
     updateTotalPrice(); // Update the total after adding an item
+
+    const params = new URLSearchParams(window.location.search);
+    const productIds = params.get('ids') ? params.get('ids').split(',') : [];
+
+    var shareBtn = document.querySelector('.shareBtn');
+    let shareProArray = []; 
+
+    var shareBtn = document.querySelector('.shareBtn');
+    shareBtn.addEventListener('click', () => {
+        if (cart.length > 0) {
+            shareProArray = cart.map(item => item.productId); // Tüm sepetteki ürünlerin ID'lerini al
+            console.log("Paylaşılacak Ürünler:", shareProArray);
+
+            const url = `shareProduct.html?ids=${encodeURIComponent(shareProArray.join(','))}`;
+            window.open(url, '_blank');
+        } else {
+            // Global tanımla
+        }
+    });
+
 }
 
 // Function to update the total price display
@@ -445,6 +466,18 @@ show_product_card.forEach(element => {
     })
 });
 
+function updateImage() {
+    const imgElement = document.getElementById('giftImage');
+    const windowWidth = window.innerWidth;
+
+    if (windowWidth < 775) {
+        imgElement.src = './img/gift30-50-70new.png'; // 775px'den küçükse
+        imgElement.alt = 'endirim 30'; // Alternatif metin
+    } else {
+        imgElement.src = './img/gift70.png'; // 775px ve üzerindeyse
+        imgElement.alt = 'endirim 70'; // Alternatif metin
+    }
+}
 
 function initializeSlider() {
     var imgArrLarge = ["./img/IMG_7812.JPG", "./img/IMG_7855.JPG"]; // Geniş ekranlar için
@@ -467,6 +500,81 @@ function initializeSlider() {
 
     updateImageArray(); // Başlangıçta diziyi ayarla
     setInterval(changeImage, 3000); // Resimleri değiştir
+    updateImage()
     window.addEventListener('resize', updateImageArray); // Boyut değiştiğinde güncelle
 }
 initializeSlider();
+
+var giftButton = document.getElementById('giftButton');
+var gift_boxs = document.getElementById('gift_boxs');
+
+if (giftButton && gift_boxs) {
+    giftButton.addEventListener('click', () => {
+        gift_boxs.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    });
+} else {
+    console.error("giftButton or gift_boxs element not found.");
+}
+
+
+var fillias = document.querySelectorAll('#fillias');
+var footer_box = document.getElementById('footer_box');
+
+fillias.forEach(e => {
+    if (e && footer_box) {
+        e.addEventListener('click', () => {
+            footer_box.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+    } else {
+        console.error("giftButton or gift_boxs element not found.");
+    }
+})
+
+function closeLeftMenu() {
+    var close_left_menu = document.querySelector('.close_left_menu');
+    var open_left_menu = document.querySelector('.open_left_menu');
+    var container = document.querySelector('.container');
+    var left_menu = document.querySelector('.left_menu');
+
+    close_left_menu.addEventListener('click', () => {
+        // Use 'toggle' method to switch between showing and hiding the menu
+        if (left_menu.style.display === 'flex' || left_menu.style.display === '') {
+            left_menu.style.display = 'none';
+        }
+    });
+    open_left_menu.addEventListener('click', () => {
+        // Use 'toggle' method to switch between showing and hiding the menu
+        if (left_menu.style.display === 'none' || left_menu.style.display === '') {
+            left_menu.style.display = 'flex';
+            left_menu.style.position = 'fixed'; // Ensure it's fixed
+            left_menu.style.left = '0'; // Position it at the left
+            left_menu.style.top = '0'; // Position it at the top
+            container.style.overflowY = 'hidden'; // Prevent scrolling
+        }
+    });
+}
+closeLeftMenu();
+
+function contactsBox() {
+    var social_links = document.querySelectorAll('.social_links');
+    var contacts = document.querySelectorAll('.contacts');
+
+    social_links.forEach(function (link) {
+        link.addEventListener('click', function () {
+            contacts.forEach(function (contact) {
+                if (contact.style.display === 'flex') {
+                    contact.style.display = 'none';
+                } else {
+                    contact.style.display = 'flex';
+                }
+            });
+        });
+    });
+}
+contactsBox();

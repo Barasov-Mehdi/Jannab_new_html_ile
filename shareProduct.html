@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background-color: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .product_details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            justify-items: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .product-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            width: 220px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card h1 {
+            font-size: 26px;
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .product-card h2 {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+
+        .product-card p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            margin: 8px 0;
+        }
+
+        .category {
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #007BFF;
+            background-color: #e0f7ff;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .best-seller {
+            color: #333;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .notes-section h2 {
+            width: 100%;
+            border: 1px solid #007bff;
+            padding: 5px;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .notes-section {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .notes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 15px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .note-box {
+            background-color: #f0f4f8;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .note-box:hover {
+            transform: scale(1.05);
+        }
+
+        .note-box img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 8px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .not-found {
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .product_details {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .product-card img {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product_details {
+                grid-template-columns: 1fr;
+            }
+
+            .product-card img {
+                width: 150px;
+                height: 150px;
+            }
+
+            .product-card h1 {
+                font-size: 22px;
+            }
+
+            .product-card h2 {
+                font-size: 16px;
+            }
+
+            .product-card p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="product_details"></div>
+
+    <script>
+        const apiUrl = 'https://jannabperfume-jannabperfume-963b35916771.herokuapp.com/api/products?limit=';
+        const productDetailsContainer = document.querySelector('.product_details');
+        const urlParams = new URLSearchParams(window.location.search);
+        const productIds = urlParams.get('ids').split(',');
+
+        async function showProducts() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+
+                const filteredProducts = data.filter(product => productIds.includes(product._id));
+
+                if (filteredProducts.length > 0) {
+                    filteredProducts.forEach(product => {
+                        const div = document.createElement('div');
+                        div.classList.add('product-card');
+                        div.innerHTML = `
+                            <img src="${product.img}" alt="${product.name}">
+                            <h1>${product.name}</h1>
+                            <p><strong>Ən Çox Satılan:</strong> <span class="best-seller">${product.bestSellers ? 'Bəli' : 'Xeyr'}</span></p>
+                            <p><strong>Kateqoriya:</strong> <span class="category" style="color: ${product.category === 'man' ? '#2196f3' : '#ea2a6a'};">${product.category.toUpperCase()}</span></p>
+                            <p>${product.content}</p>
+                        `;
+                        productDetailsContainer.appendChild(div);
+
+                    });
+                } else {
+                    productDetailsContainer.innerHTML = '<p class="not-found">Məhsul tapılmadı</p>';
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                productDetailsContainer.innerHTML = '<p class="not-found">Xəta baş verdi</p>';
+            }
+        }
+        showProducts();
+    </script>
+</body>
+
+</html>

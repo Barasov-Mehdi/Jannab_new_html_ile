@@ -28,9 +28,6 @@ html {
             width: auto; // Otomatik boyutlandırma
             height: 75px; // Daha makul bir yükseklik
             object-fit: contain;
-            // @media (max-width: 768px) { // Küçük ekranlarda logo boyutunu küçült
-            //     height: 70px;
-            // }
         }
 
         .links {
@@ -43,6 +40,26 @@ html {
 
             a {
                 text-decoration: none;
+                color: #ffffff;
+                font-size: 17px; // Daha küçük ekranlar için küçülttüm.
+                font-family: "Poppins", sans-serif;
+                font-weight: 600; // Daha okunaklı bir görünüm için kalınlığı değiştirdim.
+                margin: 0 14px; // Bağlantılar arasında boşluk.
+                transition: color 0.3s ease; // Hover efekti için geçiş ekledim.
+
+                &:hover {
+                    color: #cccccc; // Hover efekti için renk değişimi.
+                }
+
+                @media (max-width: 768px) {
+                    font-size: 15px; // Daha küçük ekranlar için font boyutunu ayarladım.
+                    margin: 0 5px;
+                }
+
+
+            }
+
+            span {
                 color: #ffffff;
                 font-size: 17px; // Daha küçük ekranlar için küçülttüm.
                 font-family: "Poppins", sans-serif;
@@ -105,6 +122,41 @@ html {
             }
 
         }
+    }
+
+    .contacts {
+        display: none;
+        width: 100%;
+        height: 50px;
+        background-color: #333333;
+        justify-content: center;
+        align-items: center;
+        animation: slideInLinks 1s forwards;
+        animation-delay: calc(0.1s * var(--order));
+        opacity: 0;
+        /* Initially hide the links */
+
+
+        a {
+            text-decoration: none;
+            color: white;
+            font-size: 25px;
+            margin: 0 10px;
+        }
+
+
+        @keyframes slideInLinks {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
     }
 
     .mb_header {
@@ -251,7 +303,7 @@ html {
             width: 100%;
             max-width: 100%;
             margin: 0 auto;
-            background-color: #f9f9f9;
+            background-color: rgba(0, 0, 0, 0.616);
             border-radius: 16px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
             overflow-y: auto;
@@ -820,40 +872,68 @@ html {
             display: block;
         }
 
-
-
         .close_bucket_box {
             width: 100%;
             text-align: end;
             margin: 10px 11px;
             color: white;
             font-size: 20px;
-
         }
 
         .product_card_box {
             margin-bottom: 15px;
             width: 100%;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
-            height: 250px;
-            scroll-behavior: smooth;
+            /*  Important to stack items vertically */
             overflow-y: auto;
+            /*  Enable vertical scrolling */
             padding: 20px 0;
+            box-sizing: border-box;
+            height: 250px;
+            scrollbar-width: thin;
+            /* Firefox */
+            scrollbar-color: #888 #f0f0f0;
+            /*  thumb, track */
+
+            &::-webkit-scrollbar {
+                width: 8px;
+                /* Chrome, Safari, Edge */
+            }
+
+            &::-webkit-scrollbar-track {
+                background: #f0f0f0;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
 
 
             .cart-item {
                 background-color: white;
                 padding: 10px 0;
-                width: 100%;
+                width: 90%;
                 display: flex;
                 justify-content: center;
                 align-items: start;
                 flex-direction: column;
                 height: 100px;
-                margin-top: 20px;
+                margin: 20px auto;
+                /* Use auto margins to center items */
+                border: 1px solid #eee;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                scroll-snap-align: start;
+                /*  For Snap scrolling, aligns item to the start of the viewport  */
+                flex-shrink: 0;
+                /* Important to prevent the cart-item from shrinking  */
+
 
                 .card_img_name {
                     display: flex;
@@ -862,12 +942,12 @@ html {
                     width: 100%;
                     height: 50px;
 
-
                     img {
                         width: 60px;
                         height: 60px;
                         object-fit: contain;
                         box-shadow: 0px 1px 1px grey;
+                        border-radius: 4px;
                     }
 
                     h3 {
@@ -876,6 +956,7 @@ html {
                         text-align: center;
                         color: black;
                         width: 150px;
+                        font-weight: normal;
                     }
                 }
 
@@ -884,26 +965,23 @@ html {
                     justify-content: end;
                     align-items: center;
                     width: 100%;
+                    padding-right: 10px;
 
                     .remove_from_cart {
-                        background-color: red;
+                        background-color: #dc3545;
                         color: #fff;
                         border: none;
                         padding: 5px 10px;
                         border-radius: 4px;
                         cursor: pointer;
                         font-size: 0.7rem;
-                        margin-right: 15px;
-
+                        transition: background-color 0.2s ease;
 
                         &:hover {
-                            background-color: darken(#fff, 10%);
-                            color: #dc3545;
+                            background-color: darken(#dc3545, 10%);
                         }
                     }
                 }
-
-
             }
         }
 
@@ -1016,6 +1094,199 @@ html {
                 }
             }
         }
+    }
+
+    .gift-container {
+        width: 100%;
+        //    height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+
+        @keyframes giftBox {
+            from {
+                transform: translateX(-100%);
+
+                to {
+                    transform: translateX(0);
+                }
+            }
+        }
+
+        img {
+            // flex-shrink: 0; // Resimlerin küçülmesini engeller.
+            width: 100%; // Resimlerin maksimum genişliği.
+            // height: 100%; // Resimlerin oranını korur.
+            scroll-snap-align: center; // Kaydırma sırasında resim merkezlenir.
+            border-radius: 8px; // Resimlerin köşelerini yuvarlar.
+            // box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Resimlere gölge ekler.
+            object-fit: contain;
+            margin: 20px 0;
+        }
+    }
+
+    .left_menu {
+        display: none; // Başlanğıcda görünməz
+        transition: all 0.3s ease; // Animasyon
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%;
+        height: 100vh;
+        background-color: white;
+        z-index: 1000;
+        overflow-y: hidden;
+        flex-direction: column;
+        animation: slideIn 1s forwards;
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                /* Başlangıçta solda dışarıda */
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                /* Orijinal pozisyonuna gelir */
+                opacity: 1;
+                /* Görünür olur */
+            }
+        }
+
+        .menu_links {
+            display: flex;
+            flex-direction: column; // Vertikal düzülüş
+            justify-content: flex-start; // Yuxarıdan başlayaraq düzülüş
+            padding: 20px; // Ümumi boşluq
+
+            a {
+                border-bottom: 0.4px solid grey;
+                text-decoration: none; // Alt xət gedir
+                color: black; // Rəng
+                font-size: 20px; // Yazı ölçüsü
+                margin: 10px 0; // Yuxarı və aşağı boşluq
+                // font-style: italic; // İtalik
+                font-weight: 400; // Qalın
+                transition: color 0.3s ease; // Üzəri rəng çevirməsi
+
+                &:hover {
+                    color: rgb(100, 100, 100); // Hover zamanı rəng
+                }
+            }
+
+            .menu_icons {
+                display: none;
+                font-size: 30px; // Yazı ölçüsü
+                margin: 10px 0; // Yuxarı və aşağı boşluq
+                transition: color 0.3s ease; // Üzəri rəng çevirməsi
+                animation: slideIns 1s forwards;
+
+
+
+                @keyframes slideIns {
+                    from {
+                        transform: translateY(-100%);
+                        /* Başlangıçta solda dışarıda */
+                        opacity: 0;
+                    }
+
+                    to {
+                        transform: translateY(0);
+                        /* Orijinal pozisyonuna gelir */
+                        opacity: 1;
+                        /* Görünür olur */
+                    }
+                }
+
+                a {
+                    display: flex;
+                    text-decoration: none;
+                    border-bottom: none;
+
+                    i {
+                        padding: 0 5px;
+                    }
+
+                    i:nth-child(1) {
+                        font-size: 25px;
+                        color: black;
+                    }
+
+                    i:nth-child(2) {
+                        font-size: 25px;
+                        color: black;
+                    }
+
+                    i:nth-child(3) {
+                        font-size: 20px;
+                        color: black;
+                    }
+                }
+            }
+
+            .contacts {
+                display: none;
+                width: 100%;
+                height: 50px;
+                background-color: #333333;
+                justify-content: space-around;
+                align-items: center;
+                animation: slideInLinks 1s forwards;
+                animation-delay: calc(0.1s * var(--order));
+                opacity: 0;
+                /* Initially hide the links */
+
+
+                a {
+                    text-decoration: none;
+                    color: white;
+                    font-size: 25px;
+                    margin: 0 10px;
+                }
+
+
+                @keyframes slideInLinks {
+                    from {
+                        transform: translateY(-100%);
+                        opacity: 0;
+                    }
+
+                    to {
+                        transform: translateY(0);
+                        opacity: 1;
+                    }
+                }
+
+            }
+        }
+
+        .close_left_menu {
+            color: rgb(212, 211, 211); // İkonun rəngi
+            background-color: #292627; // İkonun arxa fonu
+            font-size: 30px; // İkon ölçüsü
+            padding: 10px; // İkon ətrafında boşluq
+            cursor: pointer; // Tıklanabilir
+            text-align: end; // Sağdan sıralama
+            width: 100%; // Tam genişlik
+        }
+
+        .creator {
+            display: flex;
+            flex-direction: column; // Vertikal düzülüş
+            width: 100%; // Tam genişlik
+            position: absolute;
+            bottom: 0;
+
+            span {
+                color: rgb(212, 211, 211); // Mətnin rəngi
+                background-color: #292627; // Arxa fon
+                text-align: center; // Ortada mətni
+                padding: 15px; // Mətndə boşluq
+            }
+        }
+
     }
 }
 
@@ -1155,6 +1426,21 @@ html {
                 }
             }
 
+        }
+
+        .gift-container {
+
+            .gift {
+                gap: 10px;
+                width: 100%;
+                // padding: 10px;
+                justify-content: center; // Resimleri yatay olarak sıralar.
+
+                img {
+                    width: 100%;
+                    // height: 380px;
+                }
+            }
         }
 
         .scrolling-text {
