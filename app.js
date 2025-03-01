@@ -26,7 +26,7 @@ async function fetchProducts() {
         displayProducts(); // Display the products after data is fetched
     } catch (error) {
         console.error('API Error:', error);
-    }
+    } 
 }
 
 // show products

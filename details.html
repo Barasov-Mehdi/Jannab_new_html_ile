@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Details</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/1.0.0/css/font-awesome.css"
+        integrity="sha512-YX9NLok9RLg+o5JkA2Whp1kPDCBCEUolTyYykJVOe1xcaTNebXU/x02TxV0LpVYqVNJV5NVjyoMW0jHnJWICKg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -136,6 +145,93 @@
             color: red;
             font-weight: bold;
         }
+
+        .static_imgs {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            /* Flex item'ların taşmasını önlemek için */
+        }
+
+        .perfume_container {
+            width: 95px;
+            height: 100px;
+            object-fit: contain;
+            margin: 5px;
+            /* Görsel aralıklarını daha iyi ayarlamak için */
+        }
+
+        .img_title {
+            width: 100%;
+            text-align: center;
+            font-weight: bolder;
+            font-size: 20px;
+        }
+
+        .main_box {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .goHome{
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 25px;
+        }
+
+        .goHome:hover{
+            background-color: #a5cbf3;
+        } 
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+
+            .perfume_container {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product_details {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            h2 {
+                font-size: 16px;
+            }
+
+            p {
+                font-size: 13px;
+            }
+
+            .perfume_container {
+                width: 60px;
+                height: 60px;
+            }
+        }
     </style>
 </head>
 
@@ -159,11 +255,27 @@
 
                 if (product) {
                     const div = document.createElement('div');
+
                     div.innerHTML = `
-                        <img src="${product.img}" alt="${product.name}">
+                     <div class="main_box">
+                        <div class="goHome">
+                            <a href="./index.html">
+                                <i class="fa-solid fa-chevron-left" style="color: black;"></i>
+                            </a>
+                        </div>
+                        <img class="main_img" src="${product.img}" alt="${product.name}">
+                        <p calss="img_title">Şəkil tanıtım xarakteri daşıyır</p>
+                        <div class='static_imgs'>
+                            <img class="perfume_container" src="${product.img}" alt="${product.name}">
+                            <img class="perfume_container" src="./img/15ml.JPG" alt="${product.name}">
+                            <img class="perfume_container" src="./img/30ml.JPG" alt="${product.name}">
+                            <img class="perfume_container" src="./img/50ml.JPG" alt="${product.name}">
+                        </div>
+
                         <h1>${product.name}</h1>
-                        <div style="display: flex; justify-content: start; align-items: start; flex-direction: column; width: 100%;">
-                        <div style="display: flex; font-weight: bold; justify-content: start; align-items: center; width: 100%;">
+
+                        <div style="display: flex;  flex-direction:column; justify-content: start; align-items: start; flex-direction: column; width: 100%;">
+                        <div style="display: flex;  font-weight: bold; justify-content: start;  align-items: start; width: 100%;">
                         <p>Ən Çox Satılan: </p>
                         <p class="best-seller"> ${product.bestSellers ? 'Bəli' : 'Xeyr'}</p>
                         </div>
@@ -171,10 +283,15 @@
                         <p style="margin:'0 3px'">Kateqoriya:  </p>
                         <p class="category" style="color: ${product.category === 'man' ? '#2196f3' : '#ea2a6a'}; background-color: ${product.category === 'man' ? '#d0e1fa' : '#fad0d0'}; padding:'3px 5px'">${product.category.toUpperCase()}</p>
                         </div>
+                        </div>
+                        
                         <p>${product.content}</p>
+                        </div>
                         </div>
                         
                     `;
+
+
                     productDetailsContainer.appendChild(div);
 
                     function createNotesSection(title, notesObj) {
@@ -202,6 +319,16 @@
                     createNotesSection("Ürək notları:", product.heartNotes);
                     createNotesSection("Baza Notaları", product.baseNotes);
 
+                    var main_img = document.querySelector('.main_img')
+                    var perfume_container = document.querySelectorAll('.perfume_container');
+
+                    perfume_container.forEach(element => {
+                        element.addEventListener('click', () => {
+                            const nese = element.src;
+                            main_img.src = nese;
+                        })
+                    });
+
                 } else {
                     productDetailsContainer.innerHTML = '<p class="not-found">Məhsul tapılmadı</p>';
                 }
@@ -213,8 +340,6 @@
 
         showProducts();
     </script>
-
-
 </body>
 
 </html>
