@@ -177,7 +177,7 @@
             flex-direction: column;
         }
 
-        .goHome{
+        .goHome {
             width: 100%;
             height: 50px;
             display: flex;
@@ -187,9 +187,9 @@
             font-size: 25px;
         }
 
-        .goHome:hover{
+        .goHome:hover {
             background-color: #a5cbf3;
-        } 
+        }
 
         @media (max-width: 768px) {
             h1 {
@@ -274,19 +274,10 @@
 
                         <h1>${product.name}</h1>
 
-                        <div style="display: flex;  flex-direction:column; justify-content: start; align-items: start; flex-direction: column; width: 100%;">
-                        <div style="display: flex;  font-weight: bold; justify-content: start;  align-items: start; width: 100%;">
-                        <p>Ən Çox Satılan: </p>
-                        <p class="best-seller"> ${product.bestSellers ? 'Bəli' : 'Xeyr'}</p>
-                        </div>
-                        <div style="display: flex; font-weight: bold; justify-content: start; align-items: center; width: 100%;">
-                        <p style="margin:'0 3px'">Kateqoriya:  </p>
-                        <p class="category" style="color: ${product.category === 'man' ? '#2196f3' : '#ea2a6a'}; background-color: ${product.category === 'man' ? '#d0e1fa' : '#fad0d0'}; padding:'3px 5px'">${product.category.toUpperCase()}</p>
-                        </div>
-                        </div>
-                        
+                        <div style="display: flex; flex-direction:column; font-weight: bold; justify-content: start;  align-items: start; width: 100%;">
+                        <p>Ən Çox Satılan:  ${product.bestSellers ? 'Bəli' : 'Xeyr'}</p>
+                        <p >Kateqoriya: ${product.category.toUpperCase()}</p>
                         <p>${product.content}</p>
-                        </div>
                         </div>
                         
                     `;
