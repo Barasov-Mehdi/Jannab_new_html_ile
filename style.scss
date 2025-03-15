@@ -1288,6 +1288,26 @@ html {
         }
 
     }
+
+    .wp_icon {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-decoration: none;
+        font-size: 2rem;
+        position: fixed;
+        bottom: 10px;
+        right: 0;
+        background: white;
+        border-radius: 50px;
+
+        i {
+            font-size: 2.3rem;
+            color: forestgreen;
+        }
+    }
 }
 
 @media (max-width: 650px) {
@@ -1400,7 +1420,7 @@ html {
             flex-direction: column;
 
             .buttons_category {
-                width:100%;
+                width: 100%;
                 display: flex;
                 overflow-x: scroll;
                 padding: 15px 0;
@@ -1827,6 +1847,26 @@ html {
                 font-weight: bolder;
                 background-color: #ede3da;
                 color: black;
+            }
+        }
+
+        .wp_icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 2rem;
+            position: fixed;
+            bottom: 10px;
+            right: 5px;
+            background: white;
+            border-radius: 50px;
+
+            i {
+                font-size: 2.3rem;
+                color: forestgreen;
             }
         }
 
