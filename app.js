@@ -344,18 +344,8 @@ function createSearchProductBox(product) {
     const priceObj = product.price;
     const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
 
-    if (isNaN(price)) {
-        console.error(`Invalid price for product ${product.name}:`, priceObj);
-        return;
-    }
-
     const discountObj = product.discount;
     const discount = parseFloat(discountObj ? discountObj['$numberDecimal'] : '0');
-
-    if (isNaN(discount)) {
-        console.error(`Invalid discount for product ${product.name}:`, discountObj);
-        return;
-    }
 
     const search_box = document.createElement('section');
     search_box.classList.add('search_box');
@@ -364,10 +354,9 @@ function createSearchProductBox(product) {
             <div class="img_container">
                 <img src="${product.img}" alt="${product.name}">
             </div>
-        
-        <div class="name_container">
-            <h2>${product.name}</h2>
-        </div>
+            <div class="name_container">
+                <h2>${product.name}</h2>
+            </div>
         </a>
         <div class="product_footer">
             <div class="volume-select">
@@ -380,43 +369,28 @@ function createSearchProductBox(product) {
             <i class="fa-solid fa-cart-shopping add_to_card" data-product-id="${product._id}"></i>
         </div>
     `;
-
     search_results.append(search_box);
 
-    var img_container = document.querySelectorAll('.open_detailsPage');
-
-    img_container.forEach(element => {
-        element.addEventListener('click', () => {
-            window.open(`details.html?id=${product._id}`, '_blank');
-        });
+    // Add event for image click
+    search_box.querySelector('.open_detailsPage').addEventListener('click', () => {
+        window.open(`details.html?id=${product._id}`, '_blank');
     });
 
-    // Add event listeners *after* the search box is created
-    const addToCardButtons = search_box.querySelectorAll('.add_to_card');
-    const volumeOptions = search_box.querySelectorAll('.volume-options'); // Changed from volume_options
-    addToCardButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const selectedVolume = volumeOptions[0].value;
-            const productId = button.dataset.productId;  // Get ID from the data attribute
+    // Attach event listeners for 'add to cart' functionality
+    search_box.querySelector('.add_to_card').addEventListener('click', () => {
+        const selectedVolume = search_box.querySelector('.volume-options').value;
+        const productId = product._id;
 
-            // Calculate the price based on the selected volume
-            const priceObj = product.price;
-            const price = parseFloat(priceObj ? priceObj['$numberDecimal'] : '0');
-            const discountObj = product.discount;
-            const discount = parseFloat(discountObj ? discountObj['$numberDecimal'] : '0');
+        const volumePrice = calculatePrice(price, discount, parseFloat(selectedVolume));
+        const cartItem = {
+            productId: productId,
+            productName: product.name,
+            productImg: product.img,
+            volume: selectedVolume,
+            price: volumePrice,
+        };
 
-            const volumePrice = calculatePrice(price, discount, parseFloat(selectedVolume));
-            const productName = product.name;
-
-            const cartItem = {
-                productId: productId,
-                productName: productName,
-                volume: selectedVolume,
-                price: volumePrice,
-            };
-
-            addProductToCart(cartItem); // Call the function to add the product
-        });
+        addProductToCart(cartItem); // Call the function to add the product
     });
 }
 
