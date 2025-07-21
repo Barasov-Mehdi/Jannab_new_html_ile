@@ -267,12 +267,12 @@
         // Only show products on page load
         showProducts();
 
-        function buyProducts() {
+            function buyProducts() {
             const phoneNumber = "+994775626277";
             const pageUrl = window.location.href;
             const message = `${pageUrl}`;
             const encodedMessage = encodeURIComponent(message);
-            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            const whatsappLink = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
             window.open(whatsappLink, '_blank');
         }
     </script>
